@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // For adding delayed transitions
 import 'screens/register_chama.dart'; // Placeholder for your existing screens
+import 'screens/login_page.dart'; // Import the LoginPage
 
-void main() => runApp(ChamaApp());
+
+void main() => runApp(const ChamaApp());
 
 class ChamaApp extends StatelessWidget {
   const ChamaApp({super.key});
@@ -10,7 +12,7 @@ class ChamaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chama App',
+      title: 'AwaChama',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
@@ -19,12 +21,14 @@ class ChamaApp extends StatelessWidget {
   }
 }
 
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
+
 
 class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin {
   @override
@@ -105,7 +109,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                 const SizedBox(height: 20),
                 // App Name
                 const Text(
-                  'Chama App',
+                  'AwaChama',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -116,7 +120,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                 const SizedBox(height: 10),
                 // Cool tagline
                 const Text(
-                  'Empowering Women, Empowering the Future',
+                  'Empowering you, Empowering the Future',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white70,
@@ -159,19 +163,23 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('AwaChama'),
+        centerTitle: true,
+      ),
       body: Stack(
         children: [
-          // Background gradient
+          // Background gradient for a modern look
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)], // Soft green gradient
+                colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
           ),
-          // Circular graphics for a modern feel
+          // Circular graphics for styling
           Positioned(
             top: -100,
             left: -100,
@@ -196,68 +204,61 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          // Centered content
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          // Centered buttons for Login and Register Chama
+          Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Title
                 const Text(
-                  'Welcome to Chama App',
+                  'Welcome to AwaChama',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
-                // Subtitle or descriptive text
-                const Text(
-                  'Join hands with other women and empower each other by saving and investing together!',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                // "Register a Chama" button with modern styling
+                const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterChamaScreen()));
+                    // Navigate to LoginPage
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: Colors.white, // White button
-                    foregroundColor: Color(0xFF4CAF50), // Text color on button
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.green, // Color for text
                   ),
                   child: const Text(
-                    'Register a Chama',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Login',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Optional: Add another button or link to different functionality if needed
-                TextButton(
+                ElevatedButton(
                   onPressed: () {
-                    // Add additional action here if needed
+                    // Navigate to RegisterChamaScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterChamaScreen()),
+                    );
                   },
-                  child: const Text(
-                    'Learn more about Chama App',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      decoration: TextDecoration.underline,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.green, // Color for text
+                  ),
+                  child: const Text(
+                    'Register a Chama',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -268,4 +269,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-

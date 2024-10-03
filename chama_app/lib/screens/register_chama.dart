@@ -109,14 +109,14 @@ class _RegisterChamaScreenState extends State<RegisterChamaScreen> {
                   const Text('Meet Schedule', style: TextStyle(fontWeight: FontWeight.bold)),
                   DropdownButtonFormField<String>(
                     value: meetSchedule,
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         value: 'weekly',
-                        child: const Text('Weekly'),
+                        child: Text('Weekly'),
                       ),
                       DropdownMenuItem(
                         value: 'monthly',
-                        child: const Text('Monthly'),
+                        child: Text('Monthly'),
                       ),
                     ],
                     onChanged: (value) {
