@@ -5,7 +5,7 @@ class DiscussionForumPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'Discussion Forum',
         style: TextStyle(fontSize: 24),

@@ -5,7 +5,7 @@ class UserManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'User Management',
         style: TextStyle(fontSize: 24),

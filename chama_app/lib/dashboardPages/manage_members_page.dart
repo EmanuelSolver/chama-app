@@ -5,7 +5,7 @@ class ManageMembersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'Manage your Members',
         style: TextStyle(fontSize: 24),

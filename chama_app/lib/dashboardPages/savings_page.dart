@@ -5,7 +5,7 @@ class SavingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         'View your Savings here',
         style: TextStyle(fontSize: 24),

@@ -5,13 +5,13 @@ import '../dashboardPages/discussion_forum_page.dart';
 import '../dashboardPages/manage_chama_page.dart';
 import '../dashboardPages/manage_members_page.dart';
 import '../dashboardPages/user_management_page.dart';
-import '../dashboardPages/global_reports_page.dart';
+import '../dashboardPages/appAdmin/global_reports_page.dart';
 
 class DashboardScreen extends StatefulWidget {
-  final String userRole; // Add userRole parameter
-  final String username; // Add username parameter
-  final String email;    // Add email parameter
-  final String chama;    // Add Chama parameter
+  final String userRole;
+  final String username;
+  final String email;
+  final String chama;
 
   const DashboardScreen({
     super.key,
@@ -27,8 +27,13 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-
   late List<Widget> _pages;
+
+  // Initialize variables with default values
+  double totalSavings = 0.0;
+  double loansBorrowed = 0.0;
+  double paymentsMade = 0.0;
+  List<double> savingTrends = [57, 33, 8, 7, 13, 20, 27, 78, 40, 50, 25, 23];
 
   @override
   void initState() {
@@ -37,31 +42,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _initializeDashboard() {
-    // Define the pages based on the user role
-    if (widget.userRole == 'AwaChama Admin') {
-      _pages = [
-        const HomePage(),
-        const SavingsPage(),
-        const DiscussionForumPage(),
-        const ManageChamaPage(),
-        const ManageMembersPage(),
-        const UserManagementPage(),
-        const GlobalReportsPage(),
-      ];
-    } else if (widget.userRole == 'Chama Admin') {
-      _pages = [
-        const HomePage(),
-        const SavingsPage(),
-        const DiscussionForumPage(),
-        const ManageMembersPage(),
-      ];
-    } else { // Assuming the user is a specific chama member
-      _pages = [
-        const HomePage(),
-        const SavingsPage(),
-        const DiscussionForumPage(),
-      ];
-    }
+    // Fetch or set default values for totalSavings, loansBorrowed, and paymentsMade
+    setState(() {
+      totalSavings = 1000.0;  // Set real value or fetch from backend
+      loansBorrowed = 200.0;   // Set real value or fetch from backend
+      paymentsMade = 150.0;    // Set real value or fetch from backend
+      savingTrends = savingTrends;
+    });
+
+    // Initialize pages based on user role
+    _pages = [
+      HomePage(
+        userRole: widget.userRole,
+        totalSavings: totalSavings,
+        loansBorrowed: loansBorrowed,
+        paymentsMade: paymentsMade,
+        savingsTrends: savingTrends,
+      ),
+      const SavingsPage(),
+      const DiscussionForumPage(),
+      const ManageChamaPage(),
+      const ManageMembersPage(),
+      const UserManagementPage(),
+      const GlobalReportsPage(),
+    ];
   }
 
   void _onItemTapped(int index) {
@@ -75,13 +79,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chama Dashboard'),
+        backgroundColor: Colors.green,
       ),
-      // Add a drawer for navigation
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // Updated Drawer Header with user info
             DrawerHeader(
               decoration: const BoxDecoration(
                 color: Colors.green,
@@ -89,49 +92,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(5.0), // Add padding around the text
-                    alignment: Alignment.center, // Center align the text
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min, // Use min to avoid extra space
-                      crossAxisAlignment: CrossAxisAlignment.center, // Center the text horizontally
-                      children: [
-                        Text(
-                          '${widget.chama}', // Main text
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4), // Add some space between the texts
-                        const Text(
-                          'in AwaChama', // Sub-text
-                          style: TextStyle(
-                            color: Colors.white70, // Slightly different color for sub-text
-                            fontSize: 16, // Smaller font size for sub-text
-                          ),
-                        ),
-                      ],
+                  Text(
+                    widget.chama,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-
-                  const SizedBox(height: 8),
-                  // User Credentials
-                  Text(
-                    'Username: ${widget.username}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    'Email: ${widget.email}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-
+                  const SizedBox(height: 10),
+                  Text('Username: ${widget.username}', style: const TextStyle(color: Colors.white)),
+                  Text('Email: ${widget.email}', style: const TextStyle(color: Colors.white)),
                 ],
               ),
             ),
-            // Add navigation items based on user role
-            ..._getDrawerItems(), // Use a method to create the drawer items
+            ..._getDrawerItems(),
           ],
         ),
       ),
@@ -141,37 +116,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   List<Widget> _getDrawerItems() {
     List<Widget> items = [];
-    
-    // AwaChama Admin
-    if (widget.userRole == 'AwaChama Admin') {
-      items.addAll([
-        _createDrawerItem(text: 'Home', index: 0, icon: Icons.home),
-        _createDrawerItem(text: 'Savings', index: 1, icon: Icons.savings),
-        _createDrawerItem(text: 'Discussion Forum', index: 2, icon: Icons.forum),
-        _createDrawerItem(text: 'Manage Chama', index: 3, icon: Icons.group),
-        _createDrawerItem(text: 'Manage Members', index: 4, icon: Icons.people),
-        _createDrawerItem(text: 'User Management', index: 5, icon: Icons.admin_panel_settings),
-        _createDrawerItem(text: 'Global Reports', index: 6, icon: Icons.report),
-      ]);
-    } 
-    // Chama Admin
-    else if (widget.userRole == 'Chama Admin') {
-      items.addAll([
-        _createDrawerItem(text: 'Home', index: 0, icon: Icons.home),
-        _createDrawerItem(text: 'Savings', index: 1, icon: Icons.savings),
-        _createDrawerItem(text: 'Discussion Forum', index: 2, icon: Icons.forum),
-        _createDrawerItem(text: 'Manage Members', index: 3, icon: Icons.people),
-      ]);
-    } 
-    // Specific chama member
-    else {
-      items.addAll([
-        _createDrawerItem(text: 'Home', index: 0, icon: Icons.home),
-        _createDrawerItem(text: 'Savings', index: 1, icon: Icons.savings),
-        _createDrawerItem(text: 'Discussion Forum', index: 2, icon: Icons.forum),
-      ]);
-    }
-    
+
+    // Add your drawer items based on user role here
+    items.addAll([
+      _createDrawerItem(text: 'Home', index: 0, icon: Icons.home),
+      _createDrawerItem(text: 'Savings', index: 1, icon: Icons.savings),
+      _createDrawerItem(text: 'Discussion Forum', index: 2, icon: Icons.forum),
+    ]);
+
     return items;
   }
 
