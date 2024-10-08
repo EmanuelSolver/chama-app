@@ -47,7 +47,7 @@ class _SavingsPageState extends State<SavingsPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          _statusMessage = "Deposit initiated. Check your M-Pesa.";
+          _statusMessage = "Deposit initiated. Check your phone & M-pesa PIN";
         });
       } else {
         setState(() {
@@ -73,7 +73,7 @@ class _SavingsPageState extends State<SavingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Enter Amount to Deposit',
+              'Amount to Deposit',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -87,7 +87,7 @@ class _SavingsPageState extends State<SavingsPage> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Enter Mobile Number',
+              'Mobile Number',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -96,13 +96,13 @@ class _SavingsPageState extends State<SavingsPage> {
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Mobile Number',
+                labelText: 'M-pesa No',
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _makeDeposit,
-              child: const Text('Deposit via M-Pesa'),
+              child: const Text('Deposit Now'),
             ),
             const SizedBox(height: 20),
             if (_statusMessage != null)

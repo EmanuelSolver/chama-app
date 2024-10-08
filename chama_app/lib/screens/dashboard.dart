@@ -60,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         savingsTrends: savingTrends,
       ),
       const SavingsPage(),
-      const DiscussionForumPage(),
+      DiscussionForumPage(),
       const ManageChamaPage(),
       const ManageMembersPage(),
       const UserManagementPage(),
