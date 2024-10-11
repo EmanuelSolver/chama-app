@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DiscussionForumPage extends StatefulWidget {
+  const DiscussionForumPage({super.key});
+
   @override
   _DiscussionForumPageState createState() => _DiscussionForumPageState();
 }
@@ -34,9 +36,9 @@ class _DiscussionForumPageState extends State<DiscussionForumPage> {
         onPressed: () {
           // Navigate to create new topic page
         },
-        child: Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.green,
         tooltip: 'Start a New Discussion',
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -74,7 +76,7 @@ class _DiscussionForumPageState extends State<DiscussionForumPage> {
 class DiscussionDetailPage extends StatelessWidget {
   final String topic;
 
-  DiscussionDetailPage({required this.topic});
+  DiscussionDetailPage({super.key, required this.topic});
 
   final List<Map<String, String>> posts = [
     {'author': 'Alice', 'message': 'What are the savings goals for next year?', 'time': '2h ago'},

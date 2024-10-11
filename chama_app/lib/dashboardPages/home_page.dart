@@ -9,13 +9,13 @@ class HomePage extends StatefulWidget {
   final List<double> savingsTrends; // List of monthly savings data
 
   const HomePage({
-    Key? key,
+    super.key,
     required this.userRole,
     required this.totalSavings,
     required this.loansBorrowed,
     required this.paymentsMade,
     required this.savingsTrends,
-  }) : super(key: key);
+  });
 
   @override
   _HomePageState createState() => _HomePageState();

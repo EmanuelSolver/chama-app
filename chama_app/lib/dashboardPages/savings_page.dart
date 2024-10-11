@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // You may need this for API calls
 
 class SavingsPage extends StatefulWidget {
-  const SavingsPage({Key? key}) : super(key: key);
+  const SavingsPage({super.key});
 
   @override
   _SavingsPageState createState() => _SavingsPageState();
