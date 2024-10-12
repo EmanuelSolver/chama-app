@@ -11,7 +11,7 @@ class GlobalReportsPage extends StatelessWidget {
         title: const Text('Global Reports'),
         backgroundColor: Colors.green,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,17 +26,22 @@ class GlobalReportsPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatCard(
-                  title: 'Total Chamas',
-                  value: '24', // Replace with real data
-                  icon: Icons.group,
-                  color: Colors.blue,
+                Flexible(
+                  child: _buildStatCard(
+                    title: 'Total Chamas',
+                    value: '24', // Replace with real data
+                    icon: Icons.group,
+                    color: Colors.blue,
+                  ),
                 ),
-                _buildStatCard(
-                  title: 'Total Savings',
-                  value: 'Ksh 1.2M', // Replace with real data
-                  icon: Icons.savings,
-                  color: Colors.green,
+                const SizedBox(width: 10), // Add spacing between cards
+                Flexible(
+                  child: _buildStatCard(
+                    title: 'Total Savings',
+                    value: 'Ksh 1.2M', // Replace with real data
+                    icon: Icons.savings,
+                    color: Colors.green,
+                  ),
                 ),
               ],
             ),
@@ -44,17 +49,22 @@ class GlobalReportsPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatCard(
-                  title: 'Total Loans Borrowed',
-                  value: 'Ksh 500K', // Replace with real data
-                  icon: Icons.monetization_on,
-                  color: Colors.orange,
+                Flexible(
+                  child: _buildStatCard(
+                    title: 'Total Loans Borrowed',
+                    value: 'Ksh 500K', // Replace with real data
+                    icon: Icons.monetization_on,
+                    color: Colors.orange,
+                  ),
                 ),
-                _buildStatCard(
-                  title: 'Total Payments Made',
-                  value: 'Ksh 300K', // Replace with real data
-                  icon: Icons.payment,
-                  color: Colors.purple,
+                const SizedBox(width: 10), // Add spacing between cards
+                Flexible(
+                  child: _buildStatCard(
+                    title: 'Total Payments Made',
+                    value: 'Ksh 300K', // Replace with real data
+                    icon: Icons.payment,
+                    color: Colors.purple,
+                  ),
                 ),
               ],
             ),
@@ -69,71 +79,69 @@ class GlobalReportsPage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Display a Bar Chart or Pie Chart for savings
-            Expanded(
-              child: AspectRatio(
-                aspectRatio: 1.70,
-                child: BarChart(
-                  BarChartData(
-                    borderData: FlBorderData(show: false),
-                    titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (double value, _) {
-                            return Text(
-                              'Chama ${value.toInt()}',
-                              style: const TextStyle(fontSize: 12),
-                            );
-                          },
-                        ),
+            AspectRatio(
+              aspectRatio: 1.70,
+              child: BarChart(
+                BarChartData(
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (double value, _) {
+                          return Text(
+                            'Chama ${value.toInt()}',
+                            style: const TextStyle(fontSize: 12),
+                          );
+                        },
                       ),
                     ),
-                    barGroups: [
-                      BarChartGroupData(
-                        x: 1,
-                        barRods: [
-                          BarChartRodData(
-                            fromY: 0,
-                            toY: 100000, // Updated from 'y' to 'toY'
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                      BarChartGroupData(
-                        x: 2,
-                        barRods: [
-                          BarChartRodData(
-                            fromY: 0,
-                            toY: 150000, // Updated from 'y' to 'toY'
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                      BarChartGroupData(
-                        x: 3,
-                        barRods: [
-                          BarChartRodData(
-                            fromY: 0,
-                            toY: 200000, // Updated from 'y' to 'toY'
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                      BarChartGroupData(
-                        x: 4,
-                        barRods: [
-                          BarChartRodData(
-                            fromY: 0,
-                            toY: 250000, // Updated from 'y' to 'toY'
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                    ],
                   ),
+                  barGroups: [
+                    BarChartGroupData(
+                      x: 1,
+                      barRods: [
+                        BarChartRodData(
+                          fromY: 0,
+                          toY: 100000,
+                          color: Colors.green,
+                        )
+                      ],
+                    ),
+                    BarChartGroupData(
+                      x: 2,
+                      barRods: [
+                        BarChartRodData(
+                          fromY: 0,
+                          toY: 150000,
+                          color: Colors.green,
+                        )
+                      ],
+                    ),
+                    BarChartGroupData(
+                      x: 3,
+                      barRods: [
+                        BarChartRodData(
+                          fromY: 0,
+                          toY: 200000,
+                          color: Colors.green,
+                        )
+                      ],
+                    ),
+                    BarChartGroupData(
+                      x: 4,
+                      barRods: [
+                        BarChartRodData(
+                          fromY: 0,
+                          toY: 250000,
+                          color: Colors.green,
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

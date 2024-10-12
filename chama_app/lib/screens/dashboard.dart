@@ -28,6 +28,8 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
   late List<Widget> _pages;
+  late List<String> _drawerTitles; // Titles for drawer items
+  late List<int> _pageIndices; // Actual indices to avoid mismatch
 
   // Initialize variables with default values
   double totalSavings = 0.0;
@@ -39,13 +41,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
 
-    // Initialize _pages based on user role
-    _initializePages();
+    // Initialize _pages and drawer items based on user role
+    _initializePagesAndDrawer();
     _initializeDashboard();
   }
 
-  void _initializePages() {
-    // Initialize _pages based on user role logic
+  void _initializePagesAndDrawer() {
     _pages = [
       HomePage(
         userRole: widget.userRole,
@@ -55,25 +56,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
         savingsTrends: savingTrends,
       ),
       const SavingsPage(),
-      if (widget.userRole != 'appAdmin')
-        DiscussionForumPage(), // Hide discussion forum for appAdmin
-      if (widget.userRole == 'chamaAdmin')
-        ManageChamaMembersPage(), // Only show for chamaAdmin
-      if (widget.userRole == 'chamaAdmin')
-        const AddChamaMemberPage(), // Only show for chamaAdmin
-      if (widget.userRole == 'appAdmin')
-        const ManageChamasPage(), // Only show for appAdmin
-      if (widget.userRole == 'appAdmin')
-        const GlobalReportsPage(), // Only show for appAdmin
+      if (widget.userRole != 'appAdmin') DiscussionForumPage(),
+      if (widget.userRole == 'chamaAdmin') ManageChamaMembersPage(),
+      if (widget.userRole == 'chamaAdmin') const AddChamaMemberPage(),
+      if (widget.userRole == 'appAdmin') const ManageChamasPage(),
+      if (widget.userRole == 'appAdmin') const GlobalReportsPage(),
     ];
 
-    // Remove null entries that were not added due to user role restrictions
-    _pages.removeWhere((page) => page == null);
+    _drawerTitles = [
+      'Home',
+      'Savings',
+      if (widget.userRole != 'appAdmin') 'Discussion Forum',
+      if (widget.userRole == 'chamaAdmin') 'Manage Chama Members',
+      if (widget.userRole == 'chamaAdmin') 'Add Chama Member',
+      if (widget.userRole == 'appAdmin') 'Manage Chamas',
+      if (widget.userRole == 'appAdmin') 'Global Reports',
+    ];
+
+    // Remove null entries for _pages and update valid indices
+    _pageIndices = List.generate(_drawerTitles.length, (index) => index);
   }
 
   void _initializeDashboard() {
     setState(() {
-      // Fetch or set default values for totalSavings, loansBorrowed, and paymentsMade
       totalSavings = 1000.0; // Set real value or fetch from backend
       loansBorrowed = 200.0; // Set real value or fetch from backend
       paymentsMade = 150.0; // Set real value or fetch from backend
@@ -96,61 +101,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
               decoration: const BoxDecoration(
                 color: Colors.green,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chama,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.chama,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Username: ${widget.username}',
-                      style: const TextStyle(color: Colors.white)),
-                  Text('Email: ${widget.email}',
-                      style: const TextStyle(color: Colors.white)),
-                ],
+                    const SizedBox(height: 10),
+                    Text('Username: ${widget.username}',
+                        style: const TextStyle(color: Colors.white)),
+                    Text('Email: ${widget.email}',
+                        style: const TextStyle(color: Colors.white)),
+                  ],
+                ),
               ),
             ),
             ..._getDrawerItems(),
           ],
         ),
       ),
-      body: _pages[_selectedIndex], // Accessing the pages
+      body: _pages[_selectedIndex],
     );
   }
 
   List<Widget> _getDrawerItems() {
     List<Widget> items = [];
 
-    // Common drawer items for all users
-    items.addAll([
-      _createDrawerItem(text: 'Home', index: 0, icon: Icons.home),
-    ]);
-
-    int indexCounter = 1; // Start from index 1 as Home is 0
-
-    // Conditional drawer items based on userRole
-    if (widget.userRole != 'appAdmin') {
+    // Generate drawer items based on the drawer titles
+    for (int i = 0; i < _drawerTitles.length; i++) {
       items.add(_createDrawerItem(
-          text: 'Savings', index: indexCounter++, icon: Icons.savings));
-      items.add(_createDrawerItem(
-          text: 'Discussion Forum', index: indexCounter++, icon: Icons.forum));
-    }
-    if (widget.userRole == 'chamaAdmin') {
-      items.add(_createDrawerItem(
-          text: 'Manage Chama Members', index: indexCounter++, icon: Icons.people));
-      items.add(_createDrawerItem(
-          text: 'Add Chama Member', index: indexCounter++, icon: Icons.person_add));
-    }
-    if (widget.userRole == 'appAdmin') {
-      items.add(_createDrawerItem(
-          text: 'Manage Chamas', index: indexCounter++, icon: Icons.group));
-      items.add(_createDrawerItem(
-          text: 'Global Reports', index: indexCounter++, icon: Icons.bar_chart));
+        text: _drawerTitles[i],
+        index: _pageIndices[i],
+        icon: _getDrawerIcon(_drawerTitles[i]),
+      ));
     }
 
     return items;
@@ -174,8 +163,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _selectedIndex = index;
       });
     } else {
-      // Log or handle the case where the user tries to select an unavailable index
       debugPrint('Invalid page index: $index');
+    }
+  }
+
+  IconData _getDrawerIcon(String title) {
+    switch (title) {
+      case 'Home':
+        return Icons.home;
+      case 'Savings':
+        return Icons.savings;
+      case 'Discussion Forum':
+        return Icons.forum;
+      case 'Manage Chama Members':
+        return Icons.people;
+      case 'Add Chama Member':
+        return Icons.person_add;
+      case 'Manage Chamas':
+        return Icons.group;
+      case 'Global Reports':
+        return Icons.bar_chart;
+      default:
+        return Icons.menu;
     }
   }
 }

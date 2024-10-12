@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddChamaMemberPage extends StatefulWidget {
-  const AddChamaMemberPage({Key? key}) : super(key: key);
+  const AddChamaMemberPage({super.key});
 
   @override
   _AddChamaMemberPageState createState() => _AddChamaMemberPageState();

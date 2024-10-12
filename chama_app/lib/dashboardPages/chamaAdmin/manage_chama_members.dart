@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ManageChamaMembersPage extends StatefulWidget {
+  const ManageChamaMembersPage({super.key});
+
   @override
   _ManageChamaMembersPageState createState() => _ManageChamaMembersPageState();
 }

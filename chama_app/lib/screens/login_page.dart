@@ -41,7 +41,7 @@ void _login() {
 // Example function to determine user role
 String getUserRole() {
   // Logic to determine role from credentials, this could be from a server or local storage
-  return 'appAdmin'; // 'app_admin', 'chama_admin', or 'chama_member'
+  return 'chamaAdmin'; // 'app_admin', 'chama_admin', or 'chama_member'
 }
 
 
