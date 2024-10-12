@@ -67,8 +67,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       'Home',
       'Savings',
       if (widget.userRole != 'appAdmin') 'Discussion Forum',
-      if (widget.userRole == 'chamaAdmin') 'Manage Chama Members',
-      if (widget.userRole == 'chamaAdmin') 'Add Chama Member',
+      if (widget.userRole == 'chamaAdmin') 'Manage Members',
+      if (widget.userRole == 'chamaAdmin') 'Add New Member',
       if (widget.userRole == 'appAdmin') 'Manage Chamas',
       if (widget.userRole == 'appAdmin') 'Global Reports',
     ];
@@ -175,9 +175,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Icons.savings;
       case 'Discussion Forum':
         return Icons.forum;
-      case 'Manage Chama Members':
+      case 'Manage Members':
         return Icons.people;
-      case 'Add Chama Member':
+      case 'Add New Member':
         return Icons.person_add;
       case 'Manage Chamas':
         return Icons.group;
