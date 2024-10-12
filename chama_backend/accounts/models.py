@@ -12,8 +12,8 @@ class Chama(models.Model):
     ]
 
     chama_name = models.CharField(max_length=100)
+    registration_no = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
-    no_of_members = models.IntegerField()
     meet_schedule = models.CharField(max_length=10, choices=CHAMA_MEET_SCHEDULE_CHOICES)
     day_or_date = models.CharField(max_length=10)  # For weekly: day, for monthly: date
     admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AddChamaMemberPage extends StatefulWidget {
   const AddChamaMemberPage({super.key});
@@ -17,24 +19,51 @@ class _AddChamaMemberPageState extends State<AddChamaMemberPage> {
   final TextEditingController _emailController = TextEditingController();
 
   // Function to handle form submission
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Here you would usually send the data to the backend or process it
-      print('Name: ${_nameController.text}');
-      print('ID: ${_idController.text}');
-      print('Phone: ${_phoneController.text}');
-      print('Email: ${_emailController.text}');
+      // Prepare data for submission
+      final Map<String, dynamic> memberData = {
+        'username': _nameController.text, // Assuming username is same as member's name
+        'first_name': _nameController.text.split(' ')[0], // First part of the name
+        'last_name': _nameController.text.split(' ')[1],  // Second part of the name
+        'national_id': _idController.text,
+        'mobile_no': _phoneController.text,
+        'email': _emailController.text,
+      };
 
-      // Clear the form after submission
-      _nameController.clear();
-      _idController.clear();
-      _phoneController.clear();
-      _emailController.clear();
+      try {
+        // Replace with your backend URL
+        final response = await http.post(
+          Uri.parse('http://127.0.0.1:8000/api/chama/members/'), // Update with your actual API endpoint
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(memberData),
+        );
 
-      // Show a success message (you can replace this with a backend submission logic)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Member added successfully')),
-      );
+        if (response.statusCode == 201) {
+          // Clear the form after successful submission
+          _nameController.clear();
+          _idController.clear();
+          _phoneController.clear();
+          _emailController.clear();
+
+          // Show a success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Member added successfully')),
+          );
+        } else {
+          // Handle error response
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to add member: ${response.body}')),
+          );
+        }
+      } catch (e) {
+        // Handle exceptions
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
@@ -55,7 +84,7 @@ class _AddChamaMemberPageState extends State<AddChamaMemberPage> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Member Name',
+                  labelText: 'Member Name (First Last)',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {

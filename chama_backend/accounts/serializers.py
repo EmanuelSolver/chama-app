@@ -9,4 +9,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class ChamaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chama
-        fields = ['chama_name', 'location', 'no_of_members', 'meet_schedule', 'day_or_date', 'admin']
+        fields = ['chama_name', 'location', 'registration_no', 'meet_schedule', 'day_or_date', 'admin']

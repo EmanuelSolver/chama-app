@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // For adding delayed transitions
-import 'screens/register_chama.dart'; // Placeholder for your existing screens
 import 'screens/login_page.dart'; // Import the LoginPage
 
 
@@ -204,7 +203,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          // Centered buttons for Login and Register Chama
+          // Centered buttons for Login
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -239,28 +238,7 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to RegisterChamaScreen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterChamaScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.green, // Color for text
-                  ),
-                  child: const Text(
-                    'Register a Chama',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                // Removed RegisterChama button
               ],
             ),
           ),

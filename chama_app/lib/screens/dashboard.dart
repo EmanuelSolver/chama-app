@@ -3,9 +3,10 @@ import '../dashboardPages/home_page.dart';
 import '../dashboardPages/savings_page.dart';
 import '../dashboardPages/discussion_forum_page.dart';
 import '../dashboardPages/appAdmin/manage_chamas.dart';
+import '../dashboardPages/appAdmin/global_reports_page.dart';
+import '../dashboardPages/appAdmin/register_chama.dart';
 import '../dashboardPages/chamaAdmin/manage_chama_members.dart';
 import '../dashboardPages/chamaAdmin/add_chama_member.dart';
-import '../dashboardPages/appAdmin/global_reports_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userRole;
@@ -61,6 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (widget.userRole == 'chamaAdmin') const AddChamaMemberPage(),
       if (widget.userRole == 'appAdmin') const ManageChamasPage(),
       if (widget.userRole == 'appAdmin') const GlobalReportsPage(),
+      if (widget.userRole == 'appAdmin') RegisterChamaPage(),
     ];
 
     _drawerTitles = [
@@ -71,6 +73,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (widget.userRole == 'chamaAdmin') 'Add New Member',
       if (widget.userRole == 'appAdmin') 'Manage Chamas',
       if (widget.userRole == 'appAdmin') 'Global Reports',
+      if (widget.userRole == 'appAdmin') 'Register New Chama',
+
     ];
 
     // Remove null entries for _pages and update valid indices
@@ -181,6 +185,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Icons.person_add;
       case 'Manage Chamas':
         return Icons.group;
+      case 'Register New Chama':
+        return Icons.add;
       case 'Global Reports':
         return Icons.bar_chart;
       default:
