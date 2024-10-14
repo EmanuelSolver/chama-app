@@ -2,8 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
+    USER_ROLE_CHOICES = [
+        ('chamaMember', 'Chama Member'),
+        ('appAdmin', 'App Admin'),
+        ('chamaAdmin', 'Chama Admin'),
+    ]
+    
+    user_role = models.CharField(
+        max_length=20,
+        choices=USER_ROLE_CHOICES,
+        default='chamaMember'
+    )
     national_id = models.CharField(max_length=20, unique=True)
     mobile_no = models.CharField(max_length=15, unique=True)
+
 
 class Chama(models.Model):
     CHAMA_MEET_SCHEDULE_CHOICES = [

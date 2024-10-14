@@ -1,49 +1,60 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Import Dashboard Screen
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dashboard.dart'; // Import your dashboard page
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String email = '';
+  String username = '';
   String password = '';
 
-void _login() {
-  if (_formKey.currentState!.validate()) {
-    String userRole = getUserRole(); // Placeholder to fetch user role based on credentials
+  // Function to handle login
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      final Map<String, String> loginData = {
+        'username': username,
+        'password': password,
+      };
 
-    // Placeholder values for username, email, and chama. Replace with actual values as needed.
-    String username = "SampleUser"; // Get this value based on the logged-in user
-    String email = "user@example.com"; // Get this value based on the logged-in user
-    String chama = "SampleChama"; // Get this value based on the logged-in user
+      try {
+        final response = await http.post(
+          Uri.parse('http://127.0.0.1:8000/accounts/login/'), // Update with your backend login URL
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(loginData),
+        );
 
-    // Redirect to DashboardScreen with userRole and other user info
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DashboardScreen(
-          userRole: userRole,
-          username: username,
-          email: email,
-          chama: chama,
-        ),
-      ),
-    );
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login successful: ${data['user']['username']}')),
+          );
+          // Redirect to the dashboard after successful login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen(
+                    userRole: data['user']['user_role'], // Get user role
+                    username: data['user']['username'], // Get username
+                    email: data['user']['email'], // Get email
+                    chama: 'Chama Name Here',)),
+          );
+        } else {
+          final data = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${data['error']}')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
   }
-}
-
-
-// Example function to determine user role
-String getUserRole() {
-  // Logic to determine role from credentials, this could be from a server or local storage
-  return 'chamaAdmin'; // 'app_admin', 'chama_admin', or 'chama_member'
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,150 +65,135 @@ String getUserRole() {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)], // Green gradient
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
           ),
-          Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // App logo
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage('assets/logo.png'), // Placeholder for your app logo
-                          fit: BoxFit.cover,
+          // Decorative circle for modern feel
+          Positioned(
+            top: -100,
+            left: -100,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -100,
+            right: -100,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          // Login form content
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Center(
+              child: Form(
+                key: _formKey,
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Welcome Back!',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4CAF50),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // App title
-                    const Text(
-                      'Welcome Back!',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Login to continue',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-
-                    // Login Form
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          // Email field
-                          TextFormField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: 'Email',
-                              prefixIcon: const Icon(Icons.email),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none,
-                              ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            prefixIcon: Icon(Icons.person, color: Colors.green),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                email = value;
-                              });
-                            },
                           ),
-                          const SizedBox(height: 20),
-
-                          // Password field
-                          TextFormField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: 'Password',
-                              prefixIcon: const Icon(Icons.lock),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none,
-                              ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              username = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: Icon(Icons.lock, color: Colors.green),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            obscureText: true,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                password = value;
-                              });
-                            },
                           ),
-                          const SizedBox(height: 40),
-
-                          // Login Button
-                          ElevatedButton(
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              password = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
                             onPressed: _login,
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              backgroundColor: Colors.green, // Updated button background color
-                              elevation: 5,
-                              shadowColor: Colors.black.withOpacity(0.3),
+                              backgroundColor: const Color(0xFF4CAF50),
                             ),
                             child: const Text(
                               'Login',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white, // Ensure the text color is set directly
-                              ),
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
-                          const SizedBox(height: 20),
-
-                          // Forgot Password
-                          GestureDetector(
-                            onTap: () {
-                              // Navigate to Forgot Password screen (placeholder)
-                            },
-                            child: const Text(
-                              'Forgot your password?',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: () {
+                            // Navigate to registration page
+                          },
+                          child: const Text(
+                            'Don\'t have an account? Sign up here',
+                            style: TextStyle(color: Colors.grey),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

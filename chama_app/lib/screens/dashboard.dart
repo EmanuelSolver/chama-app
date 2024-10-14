@@ -30,7 +30,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
   late List<Widget> _pages;
   late List<String> _drawerTitles; // Titles for drawer items
-  late List<int> _pageIndices; // Actual indices to avoid mismatch
 
   // Initialize variables with default values
   double totalSavings = 0.0;
@@ -74,11 +73,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (widget.userRole == 'appAdmin') 'Manage Chamas',
       if (widget.userRole == 'appAdmin') 'Global Reports',
       if (widget.userRole == 'appAdmin') 'Register New Chama',
-
     ];
-
-    // Remove null entries for _pages and update valid indices
-    _pageIndices = List.generate(_drawerTitles.length, (index) => index);
   }
 
   void _initializeDashboard() {
@@ -86,7 +81,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       totalSavings = 1000.0; // Set real value or fetch from backend
       loansBorrowed = 200.0; // Set real value or fetch from backend
       paymentsMade = 150.0; // Set real value or fetch from backend
-      savingTrends = savingTrends;
     });
   }
 
@@ -141,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     for (int i = 0; i < _drawerTitles.length; i++) {
       items.add(_createDrawerItem(
         text: _drawerTitles[i],
-        index: _pageIndices[i],
+        index: i,
         icon: _getDrawerIcon(_drawerTitles[i]),
       ));
     }
@@ -149,8 +143,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return items;
   }
 
-  Widget _createDrawerItem(
-      {required String text, required int index, required IconData icon}) {
+  Widget _createDrawerItem({
+    required String text,
+    required int index,
+    required IconData icon,
+  }) {
     return ListTile(
       leading: Icon(icon, color: Colors.green),
       title: Text(text),
@@ -162,13 +159,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index < _pages.length) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    } else {
-      debugPrint('Invalid page index: $index');
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   IconData _getDrawerIcon(String title) {
