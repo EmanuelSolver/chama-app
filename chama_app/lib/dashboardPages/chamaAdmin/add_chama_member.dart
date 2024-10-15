@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class AddChamaMemberPage extends StatefulWidget {
@@ -12,29 +13,47 @@ class AddChamaMemberPage extends StatefulWidget {
 class _AddChamaMemberPageState extends State<AddChamaMemberPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers to capture input
-  final TextEditingController _nameController = TextEditingController();
+  // Controllers for form fields
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  // Function to handle form submission
+  int? userId; 
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Prepare data for submission
+      // Retrieve chamaId from local storage
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? chamaId = prefs.getInt('chamaId');
+
+      if (chamaId == null) {
+        _showSnackbar('Chama ID not found. Please make sure you are logged in and belong to a Chama.');
+        return;
+      }
+
+      // Prepare member data including chamaId
       final Map<String, dynamic> memberData = {
-        'username': _nameController.text, // Assuming username is same as member's name
-        'first_name': _nameController.text.split(' ')[0], // First part of the name
-        'last_name': _nameController.text.split(' ')[1],  // Second part of the name
+        'username': _usernameController.text,
+        'first_name': _firstNameController.text,
+        'last_name': _lastNameController.text,
         'national_id': _idController.text,
         'mobile_no': _phoneController.text,
         'email': _emailController.text,
+        'chama': chamaId, // Use chamaId from local storage
       };
 
       try {
-        // Replace with your backend URL
         final response = await http.post(
-          Uri.parse('http://127.0.0.1:8000/api/chama/members/'), // Update with your actual API endpoint
+          Uri.parse('http://127.0.0.1:8000/accounts/register_member/'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -42,135 +61,167 @@ class _AddChamaMemberPageState extends State<AddChamaMemberPage> {
         );
 
         if (response.statusCode == 201) {
-          // Clear the form after successful submission
-          _nameController.clear();
-          _idController.clear();
-          _phoneController.clear();
-          _emailController.clear();
-
-          // Show a success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Member added successfully')),
-          );
+          _clearForm();
+          _showSnackbar('Member added successfully');
         } else {
-          // Handle error response
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to add member: ${response.body}')),
-          );
+          _showSnackbar('Failed to add member: ${response.body}');
         }
-      } catch (e) {
-        // Handle exceptions
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+      } catch (error) {
+        _showSnackbar('Error submitting form: $error');
       }
     }
   }
+
+  // Show a snackbar for feedback
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  // Clear the form after submission
+  void _clearForm() {
+    _firstNameController.clear();
+    _lastNameController.clear();
+    _usernameController.clear();
+    _idController.clear();
+    _phoneController.clear();
+    _emailController.clear();
+  }
+
+
+  // Build the form
+  Widget _buildForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // First Name
+          TextFormField(
+            controller: _firstNameController,
+            decoration: const InputDecoration(
+              labelText: 'First Name',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the first name';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Last Name
+          TextFormField(
+            controller: _lastNameController,
+            decoration: const InputDecoration(
+              labelText: 'Last Name',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the last name';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Username
+          TextFormField(
+            controller: _usernameController,
+            decoration: const InputDecoration(
+              labelText: 'Username',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the username';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // National ID
+          TextFormField(
+            controller: _idController,
+            decoration: const InputDecoration(
+              labelText: 'National ID',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the National ID';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Phone Number
+          TextFormField(
+            controller: _phoneController,
+            decoration: const InputDecoration(
+              labelText: 'Mobile Number',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the phone number';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Email
+          TextFormField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the email';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Submit Button
+          ElevatedButton(
+            onPressed: _submitForm,
+            child: const Text('Add Member'),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Chama Member'),
+        title: const Text('Add Chama Member'),
         backgroundColor: Colors.green,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              // Name input field
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Member Name (First Last)',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the member name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // ID input field
-              TextFormField(
-                controller: _idController,
-                decoration: const InputDecoration(
-                  labelText: 'ID Number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the ID number';
-                  }
-                  if (value.length < 6) {
-                    return 'ID number should be at least 6 digits long';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Phone input field
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the phone number';
-                  }
-                  if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                    return 'Please enter a valid 10-digit phone number';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Email input field
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email Address',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an email address';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email address';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // Submit button
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: const Text('Add Member'),
-              ),
-            ],
-          ),
+      body: SingleChildScrollView(
+        // Added to prevent overflow
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _buildForm(),
         ),
       ),
     );
   }
 }
+
+
+
+
+

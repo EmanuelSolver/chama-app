@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // For adding delayed transitions
-import 'screens/login_page.dart'; // Import the LoginPage
+import 'screens/login.dart'; // Import the LoginPage
 
 
 void main() => runApp(const ChamaApp());
@@ -219,10 +219,10 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to LoginPage
+                    // Navigate to LoginScreen
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

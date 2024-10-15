@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class CustomUser(AbstractUser):
     USER_ROLE_CHOICES = [
         ('chamaMember', 'Chama Member'),
         ('appAdmin', 'App Admin'),
-        ('chamaAdmin', 'Chama Admin'),
     ]
     
     user_role = models.CharField(
@@ -32,3 +32,13 @@ class Chama(models.Model):
 
     def __str__(self):
         return self.chama_name
+
+
+class ChamaMembership(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    chama = models.ForeignKey(Chama, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_admin = models.BooleanField(default=False)  # Field to check if the user is admin of the Chama
+
+    def __str__(self):
+        return f"{self.user.username} - {self.chama.chama_name}"
