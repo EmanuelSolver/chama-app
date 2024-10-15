@@ -7,6 +7,7 @@ import '../dashboardPages/appAdmin/global_reports_page.dart';
 import '../dashboardPages/appAdmin/register_chama.dart';
 import '../dashboardPages/chamaAdmin/manage_chama_members.dart';
 import '../dashboardPages/chamaAdmin/add_chama_member.dart';
+import '../dashboardPages/profile_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userRole;
@@ -55,6 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         paymentsMade: paymentsMade,
         savingsTrends: savingTrends,
       ),
+      ProfilePage(),
       const SavingsPage(),
       if (widget.userRole != 'appAdmin') DiscussionForumPage(),
       if (widget.userRole == 'chamaAdmin') ManageChamaMembersPage(),
@@ -66,6 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     _drawerTitles = [
       'Home',
+      'Profile',
       'Savings',
       if (widget.userRole != 'appAdmin') 'Discussion Forum',
       if (widget.userRole == 'chamaAdmin') 'Manage Members',
@@ -113,8 +116,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text('Username: ${widget.username}',
-                        style: const TextStyle(color: Colors.white)),
-                    Text('Email: ${widget.email}',
                         style: const TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -168,6 +169,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (title) {
       case 'Home':
         return Icons.home;
+      case 'Profile':
+        return Icons.person;
       case 'Savings':
         return Icons.savings;
       case 'Discussion Forum':

@@ -46,6 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
           await prefs.setString('userRole', data['user']['user_role']);
           await prefs.setString('username', data['user']['username']);
           await prefs.setString('email', data['user']['email']);
+          await prefs.setString('firstName', data['user']['first_name']);
+          await prefs.setString('lastName', data['user']['last_name']);
+          await prefs.setString('mobileNo', data['user']['mobile_no']);
+          await prefs.setString('nationalId', data['user']['national_id']);
+
           if (data['user']['chama'] != null) {
             await prefs.setString('chamaName', data['user']['chama']['chama_name']);
             await prefs.setInt('chamaId', data['user']['chama']['chama_id']);
@@ -68,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 userRole: data['user']['user_role'], // Get user role
                 username: data['user']['username'], // Get username
                 email: data['user']['email'], // Get email
-                chama: 'Chama Name Here', // You should fetch this dynamically
+                chama: data['user']['chama']['chama_name'], // You should fetch this dynamically
               ),
             ),
           );
