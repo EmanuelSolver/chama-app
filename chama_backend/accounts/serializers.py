@@ -37,4 +37,23 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class ChamaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chama
-        fields = ['chama_name', 'location', 'registration_no', 'meet_schedule', 'day_or_date', 'admin']
+        fields = ['chama_name', 'location', 'registration_no', 'meet_schedule', 'day_or_date']
+
+    def validate(self, data):
+        meet_schedule = data.get('meet_schedule')
+        day_or_date = data.get('day_or_date')
+
+        if meet_schedule == 'weekly' and day_or_date not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+            raise serializers.ValidationError("For weekly schedule, day_or_date must be a valid day of the week.")
+        
+        if meet_schedule == 'monthly':
+            try:
+                day_of_month = int(day_or_date)
+                if day_of_month < 1 or day_of_month > 28:
+                    raise serializers.ValidationError("For monthly schedule, day_or_date must be between 1 and 28.")
+            except ValueError:
+                raise serializers.ValidationError("For monthly schedule, day_or_date must be an integer between 1 and 28.")
+        
+        return data
+
+

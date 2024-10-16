@@ -64,16 +64,31 @@ class ChamaListView(ListView):
     model = Chama
     context_object_name = 'chamas'
 
-    def get_queryset(self):
-        user_id = self.request.GET.get('user_id')
-        
-        if not user_id:
-            return Chama.objects.none()
-        
-        return Chama.objects.filter(admin__id=user_id)
-
     def render_to_response(self, context, **response_kwargs):
-        chamas = list(context['chamas'].values('id', 'name'))
+        chamas = []
+        # Loop through each chama and gather its details
+        for chama in context['chamas']:
+            # Count the number of members belonging to this chama
+            members_count = ChamaMembership.objects.filter(chama=chama).count()
+            
+            # Get the admin of this chama
+            admin_membership = ChamaMembership.objects.filter(chama=chama, is_admin=True).first()
+            admin = admin_membership.user.username if admin_membership else None
+
+            # Collect chama details
+            chama_data = {
+                'id': chama.id,
+                'chama_name': chama.chama_name,
+                'registration_no': chama.registration_no,
+                'location': chama.location,
+                'meet_schedule': chama.meet_schedule,
+                'day_or_date': chama.day_or_date,
+                'members_count': members_count,
+                'admin': admin,
+            }
+            chamas.append(chama_data)
+
+        # Check if there are chamas to return
         if chamas:
             return JsonResponse(chamas, safe=False)
         else:

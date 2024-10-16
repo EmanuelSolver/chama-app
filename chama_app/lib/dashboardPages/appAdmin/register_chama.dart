@@ -15,40 +15,9 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
   String chamaName = '';
   String chamaLocation = '';
   String chamaRegistrationNumber = '';
-  String? selectedAdmin; // Field to select Chama Admin
   String meetSchedule = 'weekly'; // Default value
   String? selectedDay; // For weekly option
-  DateTime? selectedDate; // For monthly option
-  List<String> adminList = []; // List to hold admin usernames
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchAdmins(); // Fetch the list of admins when the widget initializes
-  }
-
-  Future<void> _fetchAdmins() async {
-    try {
-      // Replace with your actual API endpoint to fetch admins
-      final response = await http.get(Uri.parse('http://127.0.0.1:8000/accounts/get_admins/'));
-      if (response.statusCode == 200) {
-        // Assuming the response is a list of admin usernames
-        setState(() {
-          adminList = List<String>.from(json.decode(response.body));
-        });
-      } else {
-        // Handle error response
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch admins: ${response.body}')),
-        );
-      }
-    } catch (e) {
-      // Handle exceptions
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching admins: $e')),
-      );
-    }
-  }
+  String? selectedDate; // For monthly option
 
   // Function to handle form submission
   Future<void> _submitForm() async {
@@ -57,12 +26,9 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
       final Map<String, dynamic> chamaData = {
         'chama_name': chamaName,
         'location': chamaLocation,
-        'registration_number': chamaRegistrationNumber,
-        'admin': selectedAdmin, // Include selected admin
+        'registration_no': chamaRegistrationNumber,
         'meet_schedule': meetSchedule,
-        'meeting_details': meetSchedule == 'weekly'
-            ? {'day': selectedDay}
-            : {'date': selectedDate?.toIso8601String()},
+        'day_or_date': meetSchedule == 'weekly' ? selectedDay : selectedDate,
       };
 
       try {
@@ -81,7 +47,6 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
             chamaName = '';
             chamaLocation = '';
             chamaRegistrationNumber = '';
-            selectedAdmin = null; // Clear selected admin
             meetSchedule = 'weekly';
             selectedDay = null;
             selectedDate = null;
@@ -121,31 +86,6 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
                 colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)], // Green shades
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          // Decorative circles for modern feel
-          Positioned(
-            top: -80,
-            left: -80,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -100,
-            right: -100,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                shape: BoxShape.circle,
               ),
             ),
           ),
@@ -200,30 +140,7 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
                       });
                     },
                   ),
-                  // Chama Admin selection field
-                  const SizedBox(height: 20),
-                  const Text('Select Chama Admin', style: TextStyle(fontWeight: FontWeight.bold)),
-                  DropdownButtonFormField<String>(
-                    value: selectedAdmin,
-                    items: adminList.map((admin) {
-                      return DropdownMenuItem(
-                        value: admin,
-                        child: Text(admin),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedAdmin = value;
-                      });
-                    },
-                    decoration: const InputDecoration(labelText: 'Choose Admin'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a Chama Admin';
-                      }
-                      return null;
-                    },
-                  ),
+
                   const SizedBox(height: 20),
 
                   // Meet schedule options (weekly or monthly)
@@ -279,33 +196,24 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
                     ),
                   ],
 
-                  // If monthly is selected, show date picker
+                  // If monthly is selected, show dropdown for day (1-28)
                   if (meetSchedule == 'monthly') ...[
                     const SizedBox(height: 10),
-                    TextFormField(
-                      decoration: const InputDecoration(labelText: 'Select a Date'),
-                      readOnly: true,
-                      onTap: () async {
-                        final pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null && pickedDate != selectedDate) {
-                          setState(() {
-                            selectedDate = pickedDate;
-                          });
-                        }
+                    DropdownButtonFormField<String>(
+                      value: selectedDate,
+                      decoration: const InputDecoration(labelText: 'Select a Day of the Month (1-28)'),
+                      items: List.generate(28, (index) {
+                        final day = (index + 1).toString();
+                        return DropdownMenuItem(value: day, child: Text(day));
+                      }),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDate = value;
+                        });
                       },
-                      controller: TextEditingController(
-                        text: selectedDate != null
-                            ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                            : '',
-                      ),
                       validator: (value) {
-                        if (selectedDate == null) {
-                          return 'Please select a date for monthly meetings';
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a day of the month for monthly meetings';
                         }
                         return null;
                       },
