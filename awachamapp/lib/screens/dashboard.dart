@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/auth_service.dart';
 import '../../../dashboardPages/home_page.dart';
 import '../../../dashboardPages/savings_page.dart';
 import '../../../dashboardPages/discussion_forum_page.dart';
@@ -28,6 +29,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final AuthService _authService = AuthService(); // Create an instance of AuthService
+
   int _selectedIndex = 0;
   late List<Widget> _pages;
   late List<String> _drawerTitles; // Titles for drawer items
@@ -155,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       title: Text(text),
       onTap: () {
         if (text == 'Sign Out') {
-          _signOut(); // Call the sign-out method
+          _signOut(context); // Call the sign-out method
         } else {
           _onItemTapped(index);
           Navigator.pop(context); // Close drawer after selection
@@ -197,10 +200,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _signOut() {
-    // Add sign-out logic here, e.g., FirebaseAuth sign-out
-    // FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacementNamed('/login');
+  void _signOut(BuildContext context) async {
+    try {
+      await _authService.signOut(); // Call the signOut method from AuthService
+      Navigator.of(context).pushReplacementNamed('/login'); // Navigate to login after successful sign out
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing out: $e')),
+      );
+    }
   }
 }
 

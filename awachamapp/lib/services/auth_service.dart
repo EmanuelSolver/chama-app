@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,10 +26,16 @@ class AuthService {
     }
   }
 
-  // Sign out
+  // Sign out and clear local storage
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+
+      // Clear data from local storage
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear(); // This will clear all stored data in SharedPreferences
+
+      print('Signed out and cleared local storage');
     } catch (e) {
       print('Error signing out: $e');
     }
