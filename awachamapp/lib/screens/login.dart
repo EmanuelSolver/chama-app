@@ -52,20 +52,19 @@ class _LoginScreenState extends State<LoginScreen> {
               .doc(user.uid) // Assuming UID is used as the document ID
               .get();
 
+          if (membershipDoc.exists) {
+            // Extract Chama ID from the membership document
+            final chamaId = membershipDoc['chama_id']; // Ensure this is a String
 
-        if (membershipDoc.exists) {
-          // Extract Chama ID from the membership document
-          final chamaId = membershipDoc['chama_id']; // Ensure this is a String
-
-          // Fetch Chama details using Chama ID
-          final chamaDoc = await FirebaseFirestore.instance
-              .collection('chama')
-              .doc(chamaId)
-              .get();
+            // Fetch Chama details using Chama ID
+            final chamaDoc = await FirebaseFirestore.instance
+                .collection('chama')
+                .doc(chamaId)
+                .get();
 
             if (chamaDoc.exists) {
               // Extract Chama details
-              final chamaName = chamaDoc['name']; 
+              final chamaName = chamaDoc['name'];
               final chamaLocation = chamaDoc['location'];
               final chamaday = chamaDoc['day_or_date'];
               final registrationNo = chamaDoc['registration_no'];
@@ -82,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               await prefs.setString('mobileNo', mobileNo);
               await prefs.setString('firstName', firstName);
               await prefs.setString('lastName', lastName);
-              await prefs.setString('nationalId', nationalId.toString()); 
+              await prefs.setString('nationalId', nationalId.toString());
               await prefs.setString('chamaId', chamaId.toString());
               await prefs.setString('chamaName', chamaName);
               await prefs.setString('chamaLocation', chamaLocation);
@@ -118,7 +117,13 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       print('Login failed: $e');
-      // Show error to the user (Snackbar or AlertDialog)
+      // Show error to the user using Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Wrong credentials'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
 
     setState(() {
