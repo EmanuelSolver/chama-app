@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert'; // Add this for JSON encoding
-import 'package:http/http.dart' as http; // Add this for HTTP requests
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
 
 class RegisterChamaPage extends StatefulWidget {
   const RegisterChamaPage({super.key});
@@ -22,46 +21,34 @@ class _RegisterChamaScreenState extends State<RegisterChamaPage> {
   // Function to handle form submission
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Prepare data for submission
+      // Prepare data for Firestore
       final Map<String, dynamic> chamaData = {
-        'chama_name': chamaName,
+        'name': chamaName,
         'location': chamaLocation,
         'registration_no': chamaRegistrationNumber,
         'meet_schedule': meetSchedule,
         'day_or_date': meetSchedule == 'weekly' ? selectedDay : selectedDate,
+        'created_on': FieldValue.serverTimestamp(), // Add a timestamp
       };
 
       try {
-        // Replace with your backend URL
-        final response = await http.post(
-          Uri.parse('http://127.0.0.1:8000/accounts/register_chama/'), // Update with your actual API endpoint
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(chamaData),
+        // Add the data to Firestore
+        await FirebaseFirestore.instance.collection('chama').add(chamaData);
+
+        // Clear the form after successful submission
+        setState(() {
+          chamaName = '';
+          chamaLocation = '';
+          chamaRegistrationNumber = '';
+          meetSchedule = 'weekly';
+          selectedDay = null;
+          selectedDate = null;
+        });
+
+        // Show a success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Chama registered successfully')),
         );
-
-        if (response.statusCode == 201) {
-          // Clear the form after successful submission
-          setState(() {
-            chamaName = '';
-            chamaLocation = '';
-            chamaRegistrationNumber = '';
-            meetSchedule = 'weekly';
-            selectedDay = null;
-            selectedDate = null;
-          });
-
-          // Show a success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Chama registered successfully')),
-          );
-        } else {
-          // Handle error response
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to register Chama: ${response.body}')),
-          );
-        }
       } catch (e) {
         // Handle exceptions
         ScaffoldMessenger.of(context).showSnackBar(

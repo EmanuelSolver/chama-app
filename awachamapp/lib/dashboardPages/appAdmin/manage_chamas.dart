@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert'; // For JSON decoding
-import 'package:http/http.dart' as http; // For making HTTP requests
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
 import 'register_chama.dart'; // Import the register chama page
 
 class ManageChamasPage extends StatefulWidget {
@@ -11,28 +10,35 @@ class ManageChamasPage extends StatefulWidget {
 }
 
 class _ManageChamasPageState extends State<ManageChamasPage> {
-  List<dynamic> chamas = []; // To store fetched chama data
-  bool isLoading = true; // To show loading spinner
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Map<String, dynamic>> chamas = []; // Store fetched chama data
+  bool isLoading = true; // Show loading spinner
 
   @override
   void initState() {
     super.initState();
-    fetchChamas(); // Fetch Chamas from the backend when the page loads
+    fetchChamas(); // Fetch Chamas from Firestore when the page loads
   }
 
-  // Function to fetch Chamas from the backend
+  // Function to fetch Chamas from Firestore
   Future<void> fetchChamas() async {
     try {
-      final response = await http.get(Uri.parse('http://127.0.0.1:8000/accounts/chamas/')); // Replace with your API endpoint
+      QuerySnapshot snapshot = await _firestore.collection('chama').get();
 
-      if (response.statusCode == 200) {
-        setState(() {
-          chamas = jsonDecode(response.body); // Parse JSON and update chama list
-          isLoading = false; // Set loading to false when data is loaded
-        });
-      } else {
-        throw Exception('Failed to load chamas');
-      }
+  setState(() {
+    chamas = snapshot.docs
+        .map((doc) => {
+              'id': doc.id,
+              'chama_name': doc['name'] ?? 'Unnamed Chama', // Fallback if null
+              'location': doc['location'] ?? 'Unknown location', // Fallback if null
+              'meet_schedule': doc['meet_schedule'] ?? 'Not specified', // Fallback if null
+              'day_or_date': doc['day_or_date'] ?? 'Not specified', // Fallback if null
+              'registration_no': doc['registration_no'] ?? 'N/A', // Fallback if null
+            })
+        .toList();
+    isLoading = false;
+  });
+
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -107,8 +113,7 @@ class _ManageChamasPageState extends State<ManageChamasPage> {
                             Text('Location: ${chama['location']}'),
                             Text('Meet Schedule: ${chama['meet_schedule']}'),
                             Text('Day/Date: ${chama['day_or_date']}'),
-                            Text('Members: ${chama['members_count']}'),
-                            Text('Admin: ${chama['admin'] ?? 'No Admin'}'),
+                            Text('Registration No: ${chama['registration_no']}'),
                           ],
                         ),
                         trailing: PopupMenuButton<String>(
@@ -147,5 +152,3 @@ class _ManageChamasPageState extends State<ManageChamasPage> {
     );
   }
 }
-
-
