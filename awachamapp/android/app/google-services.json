@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "676569728670",
+    "project_id": "awachamapp",
+    "storage_bucket": "awachamapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676569728670:android:1549a7085555f266575d8f",
+        "android_client_info": {
+          "package_name": "com.njiruapps.awachamapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKZVxUw0TcaldSqsbWhCazbiHe2zvwh1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
