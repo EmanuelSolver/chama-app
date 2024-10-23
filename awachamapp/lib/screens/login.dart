@@ -45,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
           final mobileNo = userDoc['mobile_no'];
           final nationalId = userDoc['national_id'] ?? 0;
           final email = user.email!; // Ensure it's non-null
+          final userId = user.uid;
 
           // Fetch ChamaMembership document using the user's UID
           final membershipDoc = await FirebaseFirestore.instance
@@ -75,7 +76,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Debugging prints to check values
               SharedPreferences prefs = await SharedPreferences.getInstance();
+
               await prefs.setString('username', username);
+              await prefs.setString('userId', userId);
               await prefs.setString('email', email);
               await prefs.setString('userRole', userRole);
               await prefs.setString('mobileNo', mobileNo);

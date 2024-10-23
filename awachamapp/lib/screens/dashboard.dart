@@ -9,6 +9,7 @@ import '../../../dashboardPages/appAdmin/register_chama.dart';
 import '../../../dashboardPages/chamaAdmin/manage_chama_members.dart';
 import '../../../dashboardPages/chamaAdmin/add_chama_member.dart';
 import '../../../dashboardPages/profile_page.dart';
+import '../dashboardPages/profile_edit.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userRole;
@@ -67,6 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (widget.userRole == 'appAdmin') const ManageChamasPage(),
       if (widget.userRole == 'appAdmin') const GlobalReportsPage(),
       if (widget.userRole == 'appAdmin') RegisterChamaPage(),
+      const ProfileEditPage(),
     ];
 
     _drawerTitles = [
@@ -79,6 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (widget.userRole == 'appAdmin') 'Manage Chamas',
       if (widget.userRole == 'appAdmin') 'Global Reports',
       if (widget.userRole == 'appAdmin') 'Register New Chama',
+      'Settings',
       'Sign Out'
     ];
   }
@@ -193,6 +196,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Icons.add;
       case 'Global Reports':
         return Icons.bar_chart;
+      case 'Settings':
+        return Icons.settings;
       case 'Sign Out': 
         return Icons.exit_to_app;
       default:
